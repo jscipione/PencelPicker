@@ -12,6 +12,7 @@
 #include <ControlLook.h>
 #include <InterfaceDefs.h>
 #include <LayoutBuilder.h>
+#include <PickerProtocol.h>
 #include <Rect.h>
 #include <SpaceLayoutItem.h>
 
@@ -19,13 +20,13 @@
 #include "SelectedPencil.h"
 
 
-PencilPicker::PencilPicker(rgb_color color)
+PencilPicker::PencilPicker()
 	:
 	BView("colored pencil color picker", B_WILL_DRAW),
-	fColor(color),
+	fColor(make_color(255, 0, 255)),
 	fPencilCount(kMaxPencilCount)
 {
-	fSelectedColor = new SelectedPencil(color);
+	fSelectedColor = new SelectedPencil(fColor);
 
 	// add a bunch of colored pencils
 	for (int32 i = 0; i < fPencilCount; i++)
@@ -191,21 +192,16 @@ PencilPicker::AttachedToWindow()
 void
 PencilPicker::MessageReceived(BMessage* message)
 {
-	if (message->WasDropped() || message->what == B_VALUE_CHANGED) {
-		char* name;
-		type_code type;
-		if (message->GetInfo(B_RGB_COLOR_TYPE, 0, &name, &type)
-				== B_OK) {
-			rgb_color* color;
-			ssize_t size;
-			if (message->FindData(name, type, (const void**)&color, &size)
-					== B_OK) {
-				SetColor(*color);
-
-				// forward message onto window
-				Window()->PostMessage(message);
-			}
-		}
+	char* name;
+	type_code type;
+	rgb_color* color;
+	ssize_t size;
+	if (message->GetInfo(B_RGB_COLOR_TYPE, 0, &name, &type) == B_OK
+		&& message->FindData(name, type, (const void**)&color, &size) == B_OK) {
+		SetColor(*color);
+		message->AddPointer("be:source", this);
+		message->AddMessenger("be:sender", BMessenger(this));
+		Window()->PostMessage(message);
 	} else
 		BView::MessageReceived(message);
 }
@@ -214,9 +210,10 @@ PencilPicker::MessageReceived(BMessage* message)
 void
 PencilPicker::SetColor(rgb_color color)
 {
+	color.alpha = 255;
+	if (fColor == color)
+		return;
+
 	fColor = color;
-	if (fSelectedColor != NULL) {
-		fSelectedColor->SetColor(color);
-		fSelectedColor->Invalidate(fSelectedColor->Bounds());
-	}
+	fSelectedColor->SetColor(color);
 }
