@@ -12,7 +12,6 @@
 #include <Bitmap.h>
 #include <InterfaceDefs.h>
 #include <Message.h>
-#include <PickerProtocol.h>
 #include <Rect.h>
 
 
@@ -78,8 +77,7 @@ Pencil::Pencil()
 		"Pencil", "", new BMessage(B_VALUE_CHANGED), B_FOLLOW_NONE,
 		B_WILL_DRAW),
 	fColor((rgb_color) { 0, 0, 0 }),
-	fIcon(NULL),
-	fMouseDownMessage(NULL)
+	fIcon(NULL)
 {
 	SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
 }
@@ -91,8 +89,7 @@ Pencil::Pencil(rgb_color color)
 		"Pencil", "", new BMessage(B_VALUE_CHANGED), B_FOLLOW_NONE,
 		B_WILL_DRAW),
 	fColor(color),
-	fIcon(NULL),
-	fMouseDownMessage(NULL)
+	fIcon(NULL)
 {
 	SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
 }
@@ -135,11 +132,11 @@ Pencil::Invoke(BMessage* message)
 	if (message == NULL)
 		message = Message();
 
-	message->AddData("be:value", B_RGB_COLOR_TYPE,
-		&fColor, sizeof(fColor));
-	message->AddInt64("be:when", (int64)system_time());
-	message->AddPointer("be:source", (void*)Parent());
-	message->AddMessenger("be:sender", BMessenger(Parent()));
+	message->RemoveName("be:value");
+	message->AddData("be:value", B_RGB_COLOR_TYPE, &fColor,
+		sizeof(fColor));
+	message->RemoveName("when");
+	message->AddInt64("when", (int64)system_time());
 
 	return BControl::Invoke(message);
 }
@@ -148,20 +145,8 @@ Pencil::Invoke(BMessage* message)
 void
 Pencil::MouseDown(BPoint where)
 {
-	fMouseDownMessage = new BMessage(B_VALUE_CHANGED);
-	Invoke(fMouseDownMessage);
-
+	Invoke();
 	BControl::MouseDown(where);
-}
-
-
-void
-Pencil::MouseUp(BPoint where)
-{
-	delete fMouseDownMessage;
-	fMouseDownMessage = NULL;
-
-	BControl::MouseUp(where);
 }
 
 
@@ -177,6 +162,6 @@ Pencil::SetColor(rgb_color color)
 {
 	color.alpha = 255;
 	fColor = color;
-	if (Window() != NULL)
+	if (Window())
 		Invalidate(Bounds());
 }

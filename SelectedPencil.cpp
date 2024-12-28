@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 John Scipione All rights reserved.
+ * Copyright 2012-2023 John Scipione All rights reserved.
  * Distributed under the terms of the MIT License.
  *
  * Authors:

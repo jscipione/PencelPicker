@@ -2,14 +2,14 @@
 resource app_signature "application/x-vnd.Haiku-PencilPicker";
 
 resource app_version {
-	major  = 1,
+	major  = 2,
 	middle = 0,
 	minor  = 0,
 
 	variety = B_APPV_FINAL,
 	internal = 1,
 
-	short_info = "Colored Pencil Picker",
+	short_info = "Pencil Picker",
 	long_info = "Colored Pencil Picker ©2012-2023 John Scipione"
 };
 

@@ -20,7 +20,7 @@ class SelectedPencil;
 
 class PencilPicker : public BView {
 public:
-								PencilPicker();
+								PencilPicker(rgb_color color);
 	virtual						~PencilPicker();
 
 	virtual	void				AttachedToWindow();

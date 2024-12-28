@@ -24,6 +24,7 @@ public:
 
 private:
 			PencilPickerPanel*	fPanel;
+			rgb_color			fDefaultColor;
 };
 
 

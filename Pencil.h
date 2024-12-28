@@ -24,7 +24,6 @@ public:
 	virtual	void				Draw(BRect updateRect);
 	virtual status_t			Invoke(BMessage* message = NULL);
 	virtual	void				MouseDown(BPoint where);
-	virtual	void				MouseUp(BPoint where);
 
 			rgb_color			Color() const;
 			void				SetColor(rgb_color color);
@@ -32,9 +31,6 @@ public:
 protected:
 			rgb_color			fColor;
 			BBitmap*			fIcon;
-
-private:
-			BMessage*			fMouseDownMessage;
 };
 
 

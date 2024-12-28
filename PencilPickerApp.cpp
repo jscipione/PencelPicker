@@ -25,15 +25,18 @@ const char* kSignature = "application/x-vnd.Haiku-PencilPicker";
 
 class PencilPickerPanel : public BColorPickerPanel {
 public:
-					PencilPickerPanel(PencilPicker* view, BMessage* message);
+					PencilPickerPanel(PencilPicker* view,
+						BMessage* message = NULL,
+						BColorPickerPanel::color_cell_layout layout
+							= BColorPickerPanel::B_CELLS_2x20);
 	virtual			~PencilPickerPanel();
 };
 
 
-PencilPickerPanel::PencilPickerPanel(PencilPicker* view, BMessage* message)
+PencilPickerPanel::PencilPickerPanel(PencilPicker* view, BMessage* message,
+	BColorPickerPanel::color_cell_layout layout)
 	:
-	BColorPickerPanel((PencilPicker*)view, message,
-		BColorPickerPanel::B_CELLS_4x10, "Pick a color")
+	BColorPickerPanel((BView*)view, message, layout)
 {
 }
 
@@ -49,7 +52,8 @@ PencilPickerPanel::~PencilPickerPanel()
 PencilPickerApp::PencilPickerApp()
 	:
 	BApplication(kSignature),
-	fPanel(NULL)
+	fPanel(),
+	fDefaultColor(make_color(255, 0, 0))
 {
 }
 
@@ -66,7 +70,8 @@ PencilPickerApp::MessageReceived(BMessage* message)
 		// This is the initial open message that ModuleProxy::Invoke
 		// is sending us. Pass it on to the new color picker dialog
 		// where all the details will be found.
-		fPanel = new PencilPickerPanel(new PencilPicker(), message);
+		fPanel = new PencilPickerPanel(new PencilPicker(fDefaultColor),
+			message, BColorPickerPanel::B_CELLS_4x10);
 	}
 
 	BApplication::MessageReceived(message);
@@ -81,12 +86,12 @@ PencilPickerApp::ReadyToRun()
 	else {
 		// create a window if run directly
 		BWindow* window = new BWindow(BRect(100, 100, 100, 100),
-			"Pick a color", B_TITLED_WINDOW, B_NOT_ZOOMABLE
+			"Colored pencil picker", B_TITLED_WINDOW, B_NOT_ZOOMABLE
 				| B_NOT_RESIZABLE | B_QUIT_ON_WINDOW_CLOSE
 				| B_AUTO_UPDATE_SIZE_LIMITS);
 
 		BLayoutBuilder::Group<>(window, B_VERTICAL, 0)
-			.Add(new PencilPicker())
+			.Add(new PencilPicker(fDefaultColor))
 			.End();
 		window->Show();
 	}
@@ -95,10 +100,10 @@ PencilPickerApp::ReadyToRun()
 
 extern "C" BColorPickerPanel*
 instantiate_color_picker(BView* view, BMessage* message,
-	BColorPickerPanel::color_cell_layout layout, const char* name,
-	window_look look, window_feel feel, uint32 flags, uint32 workspace)
+	BColorPickerPanel::color_cell_layout layout, window_look look,
+	window_feel feel, uint32 flags, uint32 workspace)
 {
-	return new PencilPickerPanel((PencilPicker*)view, message);
+	return new PencilPickerPanel((PencilPicker*)view, message, layout);
 }
 
 
