@@ -87,9 +87,8 @@ Pencil::Pencil()
 
 Pencil::Pencil(rgb_color color)
 	:
-	BControl(BRect(0, 0, kPencilWidth - 1, kPencilHeight - 1),
-		"Pencil", "", new BMessage(B_VALUE_CHANGED), B_FOLLOW_NONE,
-		B_WILL_DRAW),
+	BControl(BRect(0, 0, kPencilWidth - 1, kPencilHeight - 1), "Pencil", "",
+		new BMessage(B_VALUE_CHANGED), B_FOLLOW_NONE, B_WILL_DRAW),
 	fColor(color),
 	fIcon(NULL),
 	fMouseDownMessage(NULL)
@@ -135,10 +134,7 @@ Pencil::Invoke(BMessage* message)
 	if (message == NULL)
 		message = Message();
 
-	message->AddData("be:value", B_RGB_COLOR_TYPE,
-		&fColor, sizeof(fColor));
-	message->AddInt64("be:when", (int64)system_time());
-	message->AddPointer("be:source", (void*)Parent());
+	message->AddData("be:value", B_RGB_COLOR_TYPE, &fColor, sizeof(fColor));
 	message->AddMessenger("be:sender", BMessenger(Parent()));
 
 	return BControl::Invoke(message);
