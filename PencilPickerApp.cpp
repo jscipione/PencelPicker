@@ -87,6 +87,7 @@ PencilPickerApp::ReadyToRun()
 
 		BLayoutBuilder::Group<>(window, B_VERTICAL, 0)
 			.Add(new PencilPicker())
+			.SetInsets(B_USE_DEFAULT_SPACING)
 			.End();
 		window->Show();
 	}
