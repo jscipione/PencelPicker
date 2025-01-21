@@ -1,6 +1,7 @@
 /*
+ * Copyright 2012-2025 John Scipione. All rights reserved.
  * Copyright 1999, Be Incorporated. All rights reserved.
- * Copyright 2012-2023 John Scipione All rights reserved.
+ *
  * This file may be used under the terms of the Be Sample Code License.
  */
 
@@ -20,11 +21,17 @@
 #include "SelectedPencil.h"
 
 
+static const rgb_color kRed = make_color(255, 0, 0, 255);
+
+
 PencilPicker::PencilPicker()
 	:
 	BView("colored pencil color picker", B_WILL_DRAW),
-	fColor(make_color(255, 0, 255)),
-	fPencilCount(kMaxPencilCount)
+	fColor(kRed),
+	fSelectedColor(NULL),
+	fPencilCount(kMaxPencilCount),
+	fMouseOffset(B_ORIGIN),
+	fMouseDown(false)
 {
 	fSelectedColor = new SelectedPencil(fColor);
 
@@ -198,6 +205,51 @@ PencilPicker::MessageReceived(BMessage* message)
 			Window()->PostMessage(message);
 	} else
 		BView::MessageReceived(message);
+}
+
+
+void
+PencilPicker::MouseDown(BPoint where)
+{
+	fMouseOffset = where;
+	fMouseDown = true;
+
+	if (Window() == NULL)
+		return BView::MouseDown(where);
+
+	Window()->Activate();
+
+	SetMouseEventMask(B_POINTER_EVENTS, B_NO_POINTER_HISTORY
+		| B_SUSPEND_VIEW_FOCUS | B_LOCK_WINDOW_FOCUS);
+
+	BView::MouseDown(where);
+}
+
+
+void
+PencilPicker::MouseMoved(BPoint where, uint32 code,
+	const BMessage* dragMessage)
+{
+	if (Window() == NULL || Window()->CurrentMessage() == NULL)
+		return BView::MouseMoved(where, code, dragMessage);
+
+	uint32 buttons = Window()->CurrentMessage()->GetInt32("buttons", 0);
+	if (fMouseDown && buttons == B_PRIMARY_MOUSE_BUTTON) {
+		BPoint windowPosition = Window()->Frame().LeftTop();
+		Window()->MoveTo(windowPosition.x + where.x - fMouseOffset.x,
+			windowPosition.y + where.y - fMouseOffset.y);
+	} else
+		BView::MouseMoved(where, code, dragMessage);
+}
+
+
+void
+PencilPicker::MouseUp(BPoint where)
+{
+	fMouseOffset = B_ORIGIN;
+	fMouseDown = false;
+
+	BView::MouseUp(where);
 }
 
 
