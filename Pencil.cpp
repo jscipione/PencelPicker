@@ -132,10 +132,9 @@ status_t
 Pencil::Invoke(BMessage* message)
 {
 	if (message == NULL)
-		message = Message();
+		message = new BMessage(B_VALUE_CHANGED);
 
-	message->AddData("be:value", B_RGB_COLOR_TYPE, &fColor, sizeof(fColor));
-	message->AddMessenger("be:sender", BMessenger(Parent()));
+	message->AddData("RGBColor", B_RGB_COLOR_TYPE, &fColor, sizeof(fColor));
 
 	return BControl::Invoke(message);
 }
