@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2023 John Scipione All rights reserved.
+ * Copyright 2012-2025 John Scipione. All rights reserved.
  * Distributed under the terms of the MIT License.
  */
 #ifndef PENCIL_PICKER_APP_H
@@ -7,12 +7,22 @@
 
 
 #include <Application.h>
+#include <ColorPickerPanel.h>
 
 
 extern const char* kSignature;
 
 
-class PencilPickerPanel;
+using BPrivate::BColorPickerPanel;
+
+
+class PencilPicker;
+
+class PencilPickerPanel : public BColorPickerPanel {
+public:
+					PencilPickerPanel(PencilPicker* view, BMessage* message);
+	virtual			~PencilPickerPanel();
+};
 
 class PencilPickerApp : public BApplication {
 public:

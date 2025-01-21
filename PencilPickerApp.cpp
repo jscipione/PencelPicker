@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2023 John Scipione All rights reserved.
+ * Copyright 2012-2025 John Scipione. All rights reserved.
  * Distributed under the terms of the MIT License.
  *
  * Authors:
@@ -9,7 +9,6 @@
 
 #include "PencilPickerApp.h"
 
-#include <ColorPickerPanel.h>
 #include <LayoutBuilder.h>
 #include <PickerProtocol.h>
 #include <Window.h>
@@ -20,14 +19,10 @@
 const char* kSignature = "application/x-vnd.Haiku-PencilPicker";
 
 
+using BPrivate::BColorPickerPanel;
+
+
 //	#pragma mark - PencilPickerPanel
-
-
-class PencilPickerPanel : public BColorPickerPanel {
-public:
-					PencilPickerPanel(PencilPicker* view, BMessage* message);
-	virtual			~PencilPickerPanel();
-};
 
 
 PencilPickerPanel::PencilPickerPanel(PencilPicker* view, BMessage* message)
