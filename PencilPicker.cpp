@@ -200,8 +200,7 @@ PencilPicker::MessageReceived(BMessage* message)
 	if (message->GetInfo(B_RGB_COLOR_TYPE, 0, &name, &type) == B_OK
 		&& message->FindData(name, type, (const void**)&color, &size) == B_OK) {
 		SetColor(*color);
-
-		if (!message->IsSourceRemote())
+		if (message->WasDropped() || !message->IsSourceRemote())
 			Window()->PostMessage(message);
 	} else
 		BView::MessageReceived(message);
